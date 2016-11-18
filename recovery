@@ -1,0 +1,112 @@
+
+#!/bin/bash
+echo "1.Backup"
+echo "2.Restore"
+echo "Ban muon Backup hay Restore(1/2)"
+read number
+if [ $number -eq 1 ]
+ then 
+ echo "He dieu hanh ban muon sao luu la gi Windown hay Linux"
+ echo "1.Linux"
+ echo "2.Windows"
+ echo "Nhap so:"; read os
+ if [ $os -eq 1 ] 
+  then
+   echo "LINUX"
+   echo "Nhap duong dan chinh xac de Save NHO NHAP / sau moi duong dan" 
+   read path
+   echo "Nhap ten can luu"
+   read name
+   sudo tar -cvpzf $path$name.tar.gz --exclude=/proc --exclude =/media/ --exclude=/run/  --one-file-system  /
+  else
+   echo "WINDOWS"
+   echo "Mainbroad cua ban la BIOS hay UEFI"
+   echo "1.UEFI"
+   echo "2.BIOS"
+   read mainbroad
+   if [ $mainbroad -eq 1]
+    then
+     echo "UEFI can duoc sao luu"
+     echo "Day la danh sach o dia may tinh ban coi cai nao chua UEFI thi chon"
+     sudo fdisk -l
+     echo "Xin moi nhap"
+     read wmainbroad
+     sudo mkdir /UEFI
+     sudo mount -t fat32 $wmainbroad /UEFI
+   else
+     echo "BIOS khong can sao luu"
+     fi
+   echo "Day la danh sach o dia ban coi o dia nao la cai dat Windown thi chon"
+   sudo fdisk -l
+   echo "Nhap duong dan o dia"
+   read disk
+   sudo mount -t ntfs $disk /mnt
+   echo "Nhap duong dan chinh xac de Save NHO NHAP / sau moi duong dan"
+   echo "Duong dan nay chua luon UEFI"
+   read path
+   echo "Nhap ten can luu"
+   read name
+   UEFI=UEFI
+   sudo tar -cvpzf $path$name.tar.gz --exclude=$path$name.tar.gz /mnt
+   sudo tar -cvpzf $path$UEFI.tar.gz --exclude=$path$UEFI.tar.gz /UEFI
+   echo "Sao luu da xong xin moi ban nhan enter de ket thuc"
+   read enter
+   sudo umount $wmainbroad
+   sudo umount $disk
+   sudo rmdir /UEFI 
+   fi
+else
+ echo "Ban dang o che do khoi phuc "
+ echo "He dieu hanh ban muon sao luu la gi Windown hay Linux"
+ echo "1.Linux"
+ echo "2.Windows"
+ echo "Nhap so:"; read os
+  if [ $os -eq 1]
+   then
+    echo "LINUX MODE"
+    echo "Nhap duong dan ban da luu ban sao luu"
+    echo "Day la danh sach o dia ban hay chon o dia nao ma ban luu tru ban sao luu"
+    sudo fdisk -l
+    echo "Nhap o dia"
+    read disk
+    sudo mount -t ext4 $disk /mnt
+    cd /mnt
+    echo "Nhap ten hay duong dan da luu"
+    read name
+    echo "Nhap o dia ban muon ban phuc hoi Linux OS"
+    sudo fdisk -l
+    echo "Nhap o dia"
+    read linux
+    sudo mkdir /LINUX
+    sudo mkfs.ext4 $linux
+    sudo mount -t ext4 $linux /LINUX
+    cd /LINUX
+    tar -xvf /mnt/$name && mkdir proc sys mnt media run dev
+    echo "Khoi phuc hoan thanh"
+    sudo umount $linux
+    sudo rmdir LINUX
+   else
+    echo "WINDOWS MODE"
+    echo "Nhap duong dan ban da sao luu"
+    echo "Day la danh sach o dia ban hay chon o dia nao ma ban luu tru ban sao luu"
+    sudo fdisk -l
+    echo "Nhap o dia"
+    read disk
+    sudo mount -t ntfs $disk /mnt
+    cd /mnt
+    echo "Nhap ten hay duong dan da luu"
+    read name
+    echo "Nhap o dia ban muon ban phuc hoi Windows OS"
+    sudo fdisk -l
+    echo "Nhap o dia"
+    read windows
+    sudo mkdir /windows
+    sudo mkfs.ntfs $windows
+    sudo mount -t ntfs $windows /WINDOWS
+    cd /WINDOWS
+    tar -xvf /mnt/$name
+    echo "Khoi phuc hoan thanh"
+    sudo umount $windows
+    sudo rmdir WINDOWS
+    fi
+fi
