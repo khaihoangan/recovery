@@ -17,7 +17,7 @@ if [ $number -eq 1 ]
    read path
    echo "Nhap ten can luu"
    read name
-   sudo tar -cvpzf $path$name.tar.gz --exclude=/proc --exclude =/media/ --exclude=/run/  --one-file-system  /
+   sudo tar -cvpzf $path$name.tar.gz --exclude=/proc --exclude =/media --exclude=/run  --one-file-system  /
   else
    echo "WINDOWS"
    echo "Mainbroad cua ban la BIOS hay UEFI"
@@ -62,7 +62,7 @@ if [ $number -eq 1 ]
      read path
      echo "Nhap ten can luu"
      read name
-     sudo tar -cvpzf $path$name.tar.gz --exclude=$path$name.tar.gz /mnt
+     sudo tar -cvpzf $path$name.tar.gz --exclude=$path$name.tar.gz --exclude=/mnt /mnt
      fi
    fi
 else
@@ -112,11 +112,12 @@ else
     read windows
     sudo mkdir /windows
     sudo mkfs.ntfs $windows
-    sudo mount -t ntfs $windows /WINDOWS
-    cd /WINDOWS
+    sudo mount -t ntfs $windows /windows
+    cd /windows
     tar -xvf /mnt/$name
+    cd * && mv * /windows
     echo "Khoi phuc hoan thanh"
     sudo umount $windows
-    sudo rmdir WINDOWS
+    sudo rmdir windows
     fi
 fi
